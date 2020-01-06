@@ -24,7 +24,7 @@ const start = ({ port }) =>
     router.get("/update", (req, res) => {
       const channels = JSON.parse(req.query.channels);
 
-      dmx.update("default-universe", channels);
+      dmx.update(channels);
 
       res.json({ response: channels });
     });

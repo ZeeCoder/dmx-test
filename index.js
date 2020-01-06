@@ -1,17 +1,34 @@
-const DMX = require("dmx");
+#!/usr/bin/env node
+const meow = require("meow");
+const server = require("./src/server");
+const dmx = require("./src/dmx");
+
+const cli = meow(``);
 
 // --- Config ---
-// @see https://github.com/node-dmx/dmx#dmxregisterdrivername-module
-const driverName = "enttec-usb-dmx-pro";
-// @see https://github.com/node-dmx/dmx#dmxadduniversename-driver-device_id-options
-const deviceId = "your device id here";
-const deviceOptions = {};
-// @see https://github.com/node-dmx/dmx#dmxupdateuniverse-channels
-const updateToChannels = {};
+let {
+  port = 8899,
+  // @see https://github.com/node-dmx/dmx#dmxregisterdrivername-module
+  driverName = "enttec-usb-dmx-pro",
+  // @see https://github.com/node-dmx/dmx#dmxadduniversename-driver-device_id-options
+  deviceId,
+  deviceOptions: cliDeviceOptions = "{}"
+} = cli.flags;
+const deviceOptions = JSON.parse(cliDeviceOptions);
 // --- End Config ---
 
-const dmx = new DMX();
+dmx
+  .initialise({ driverName, deviceId, deviceOptions })
+  .then(() => {
+    console.log(`DMX initialised`);
 
-dmx.addUniverse("default-universe", driverName, deviceId, deviceOptions);
-
-dmx.update("default-universe", updateToChannels);
+    server
+      .start({ port })
+      .then(() => {
+        console.log(`HTTP server running at port "${port}"`);
+      })
+      .catch(error =>
+        console.error(`Failed to start HTTP server. ${error.stack}`)
+      );
+  })
+  .catch(error => console.error(`Failed to initialise DMX. ${error.stack}`));

@@ -18,8 +18,8 @@ const start = ({ port }) =>
     });
 
     router.get("/", (req, res) => res.json({}));
-    router.get("/list", (req, res) =>
-      res.json({ deviceIds: dmx.getDeviceIds() })
+    router.get("/list", async (req, res) =>
+      res.json({ deviceIds: await dmx.getDeviceIds() })
     );
     router.get("/update", (req, res) => {
       const channels = JSON.parse(req.query.channels);

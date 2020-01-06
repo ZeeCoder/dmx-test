@@ -13,7 +13,7 @@ const initialise = async ({ driverName, deviceId, deviceOptions }) => {
     }
 
     deviceId = deviceIds[0];
-    console.log(`Using the "${deviceId}" found for the DMX.`);
+    console.log(`Using the "${deviceId}" device ID found for the DMX.`);
   }
 
   dmx.addUniverse("default-universe", driverName, deviceId, deviceOptions);
@@ -27,10 +27,9 @@ const getDeviceIds = () =>
   SerialPort.list().then(ports =>
     ports
       .filter(
-        ({ comName, path, manufacturer }) =>
-          (Boolean(comName) || Boolean(path)) && Boolean(manufacturer)
+        ({ path, manufacturer }) => Boolean(path) && Boolean(manufacturer)
       )
-      .map(({ comName, path }) => comName || path)
+      .map(({ path }) => path)
   );
 
 module.exports = {
